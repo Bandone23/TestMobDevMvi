@@ -12,25 +12,25 @@ import com.bancosantander.testmobdevmvi.R
 import com.bancosantander.testmobdevmvi.data.remote.net.BreedsHelperImpl
 import com.bancosantander.testmobdevmvi.data.remote.net.RetrofitBuilder
 import com.bancosantander.testmobdevmvi.presentation.adapter.BreedsAdapter
-import com.bancosantander.testmobdevmvi.presentation.mvibase.BreedsIntent
-import com.bancosantander.testmobdevmvi.presentation.mvibase.BreedsState
+import com.bancosantander.testmobdevmvi.presentation.mvibase.breeds.BreedsIntent
+import com.bancosantander.testmobdevmvi.presentation.mvibase.breeds.BreedsState
 import com.bancosantander.testmobdevmvi.presentation.viewmodel.BreedsViewModel
 import com.bancosantander.testmobdevmvi.util.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var breedsViewModel: BreedsViewModel
-    private var adapter = BreedsAdapter(arrayListOf())
+
+    private lateinit var mBreedsAdapter: BreedsAdapter
 
     private val breeds: ArrayList<String> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setupUI()
+
         setupViewModel()
         observeViewModel()
         setupClicks()
@@ -44,19 +44,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun setupUI() {
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.run {
-            addItemDecoration(
-                DividerItemDecoration(
-                    recyclerView.context,
-                    (recyclerView.layoutManager as LinearLayoutManager).orientation
-                )
-            )
-        }
-        recyclerView.adapter = adapter
-    }
 
 
     private fun setupViewModel() {
@@ -90,6 +77,8 @@ class MainActivity : AppCompatActivity() {
                             breeds.add(it.breedList[item])
                         }
                         renderList(breeds)
+
+
                     }
                     is BreedsState.Error -> {
                         progressBar.visibility = View.GONE
@@ -101,12 +90,27 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun renderList(users: List<String>) {
+    private fun renderList(users: ArrayList<String>) {
         recyclerView.visibility = View.VISIBLE
-        users.let { listOfUsers -> listOfUsers.let { adapter.addData(it) } }
-        adapter.notifyDataSetChanged()
+         mBreedsAdapter = BreedsAdapter(users) { animals, viewId: Int ->
+                            breedsClicked(
+                                animals,
+                                viewId
+                            )
+                        }
+                        recyclerView.layoutManager = LinearLayoutManager(this)
+                        recyclerView.adapter = mBreedsAdapter
 
     }
+
+    private fun breedsClicked(breeds: String, viewId: Int) {
+        when (viewId) {
+            R.id.title_breeds -> {
+             Toast.makeText(this, "raza:$breeds",Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 }
 
 

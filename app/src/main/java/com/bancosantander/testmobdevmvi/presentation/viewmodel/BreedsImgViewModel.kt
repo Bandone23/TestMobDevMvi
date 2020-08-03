@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.bancosantander.testmobdevmvi.data.repository.BreedsRepository
 import com.bancosantander.testmobdevmvi.presentation.mvibase.breeds.BreedsIntent
 import com.bancosantander.testmobdevmvi.presentation.mvibase.breeds.BreedsState
+import com.bancosantander.testmobdevmvi.presentation.mvibase.breedsImg.BreedsImgIntent
+import com.bancosantander.testmobdevmvi.presentation.mvibase.breedsImg.BreedsImgState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,16 +14,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
-class BreedsViewModel (
+class BreedsImgViewModel(
     private val repository: BreedsRepository
 ):ViewModel() {
-
-
-    val breedIntent = Channel<BreedsIntent>(Channel.UNLIMITED)
-    private val stateId = MutableStateFlow<BreedsState>(
-        BreedsState.Idb)
-    val state:StateFlow<BreedsState>
-    get() = stateId
+    val breedImgIntent = Channel<BreedsImgIntent>(Channel.UNLIMITED)
+    private val stateId = MutableStateFlow<BreedsImgState>(
+        BreedsImgState.Idb)
+    val state: StateFlow<BreedsImgState>
+        get() = stateId
 
     init {
         handleIntent()
@@ -29,21 +29,21 @@ class BreedsViewModel (
 
     private fun handleIntent() {
         viewModelScope.launch {
-            breedIntent.consumeAsFlow().collect {
+            breedImgIntent.consumeAsFlow().collect {
                 when (it) {
-                    is BreedsIntent.FetchBreeds -> fetchBreeds()
+                    is BreedsImgIntent.FetchBreedsImg -> fetchBreedsImg(name = "")
                 }
             }
         }
     }
 
-    private fun fetchBreeds() {
+    private fun fetchBreedsImg(name:String) {
         viewModelScope.launch {
-            stateId.value = BreedsState.Loading
+            stateId.value = BreedsImgState.Loading
             stateId.value = try {
-                BreedsState.Breed(repository.getBreeds().message)
+                BreedsImgState.BreedImg(repository.getBreedsImg(name).message)
             } catch (e: Exception) {
-                BreedsState.Error(e.localizedMessage)
+                BreedsImgState.Error(e.localizedMessage)
             }
         }
     }
