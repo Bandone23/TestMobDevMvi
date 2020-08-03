@@ -105,6 +105,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.visibility = View.VISIBLE
         users.let { listOfUsers -> listOfUsers.let { adapter.addData(it) } }
         adapter.notifyDataSetChanged()
+
     }
 }
 
