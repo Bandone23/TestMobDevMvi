@@ -85,7 +85,6 @@ class BreedsImgFragment : Fragment() {
                     is BreedsImgState.Loading -> {
                         progress_circular_img.visibility = View.VISIBLE
                     }
-
                     is BreedsImgState.BreedImg -> {
                         progress_circular_img.visibility = View.GONE
                         breedsImg.clear()
