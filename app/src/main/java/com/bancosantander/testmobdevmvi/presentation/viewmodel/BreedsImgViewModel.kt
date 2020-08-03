@@ -7,6 +7,7 @@ import com.bancosantander.testmobdevmvi.presentation.mvibase.breeds.BreedsIntent
 import com.bancosantander.testmobdevmvi.presentation.mvibase.breeds.BreedsState
 import com.bancosantander.testmobdevmvi.presentation.mvibase.breedsImg.BreedsImgIntent
 import com.bancosantander.testmobdevmvi.presentation.mvibase.breedsImg.BreedsImgState
+import com.bancosantander.testmobdevmvi.util.AppPreferences
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,20 +19,21 @@ class BreedsImgViewModel(
     private val repository: BreedsRepository
 ):ViewModel() {
     val breedImgIntent = Channel<BreedsImgIntent>(Channel.UNLIMITED)
-    private val stateId = MutableStateFlow<BreedsImgState>(
-        BreedsImgState.Idb)
+
+    private val stateId = MutableStateFlow<BreedsImgState>(BreedsImgState.Idb)
+
     val state: StateFlow<BreedsImgState>
         get() = stateId
 
     init {
-        handleIntent()
+        handleIntent(name = AppPreferences.nameBreeds!!.toString())
     }
 
-    private fun handleIntent() {
+    private fun handleIntent(name:String) {
         viewModelScope.launch {
             breedImgIntent.consumeAsFlow().collect {
                 when (it) {
-                    is BreedsImgIntent.FetchBreedsImg -> fetchBreedsImg(name = "")
+                    is BreedsImgIntent.FetchBreedsImg -> fetchBreedsImg(name = name)
                 }
             }
         }

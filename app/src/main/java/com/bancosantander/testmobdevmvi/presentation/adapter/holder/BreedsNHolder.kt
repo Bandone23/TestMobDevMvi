@@ -10,8 +10,8 @@ class BreedsNHolder (
 ):RecyclerView.ViewHolder(binding.root){
     fun binEvent(breeds:String,clickListener: (String, Int) -> Unit) {
         binding.titleBreeds.text = breeds
-        binding.titleBreeds.setOnClickListener {
-            clickListener(breeds,binding.titleBreeds.id)
+        binding.containerBreeds.setOnClickListener {
+            clickListener(breeds,binding.containerBreeds.id)
         }
         binding.executePendingBindings()
 
